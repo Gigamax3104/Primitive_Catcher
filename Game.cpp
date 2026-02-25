@@ -206,7 +206,6 @@ static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveB
 	boxSave = 0;
 
 	combo = 0;
-	saveCombo = combo;
 
 	RandomShaep();
 
