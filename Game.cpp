@@ -196,6 +196,35 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox) {
 	}
 }
 
+static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveBox) {
+	hit = 0;
+
+	instanceCount = 1;
+	instanceSave = instanceCount;
+	circleCount = 0, boxCount = 0;
+	circleSave = 0;
+	boxSave = 0;
+
+	combo = 0;
+	saveCombo = combo;
+
+	RandomShaep();
+
+	if (instanceFlag) circleSave = circleCount;
+	if (instanceFlag) boxSave = boxCount;
+
+	fallCircle = new Circle[circleCount];
+	saveCircle = fallCircle;
+
+	fallBox = new Box[boxCount];
+	saveBox = fallBox;
+
+	if (circleCount != 0) Initialization(fallCircle, fallBox, true);
+	if (boxCount != 0) Initialization(fallCircle, fallBox, false);
+
+	player = { MIDLE,{MIDLE,20,color[WHITE],0,true},{MIDLE,40,40,color[WHITE],0,true},false };
+}
+
 void Game(System* timer,State* state) {
 	srand((unsigned int)time(NULL));
 
@@ -259,6 +288,10 @@ void Game(System* timer,State* state) {
 	if (timer->count <= 0 || CheckHitKey(KEY_INPUT_ESCAPE)) {
 		timer->count = 0;
 		*state = OVER;
-		delete[] fallCircle, fallBox;
+
+		delete[] fallCircle;
+		delete[] fallBox;
+
+		Reset(fallCircle,fallBox,saveFallCircle,saveFallBox);
 	}
 }
