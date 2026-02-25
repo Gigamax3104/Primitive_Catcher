@@ -1,0 +1,19 @@
+#pragma once
+#define	COLOR_RED 0xff0000
+#define COLOR_GREEN 0x00ff00
+#define COLOR_BLUE 0x0000ff
+#define COLOR_YELLOW 0xffff00
+#define COLOR_LIGHTBLUE 0x00ffff
+#define COLOR_MAZENTA 0xff00ff
+#define COLOR_WHITE 0xffffff
+#define COLOR_BLACK 0x000000
+
+const int color[] = {
+	COLOR_RED,COLOR_GREEN,COLOR_BLUE,COLOR_YELLOW,COLOR_LIGHTBLUE,COLOR_MAZENTA,COLOR_WHITE,COLOR_BLACK
+};
+
+const int COLORSIZE = sizeof color / sizeof color[0];
+
+enum {
+	RED,GREEN,BLUE,YELLOW,LIGHTBLUE,MAZENTA,WHITE,BLACK
+};
