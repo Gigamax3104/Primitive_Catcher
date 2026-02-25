@@ -277,7 +277,7 @@ void Game(System* timer,State* state) {
 	player.flag ? player.P_box.pos = player.pos : player.P_circle.pos = player.pos;
 
 	SetFontSize(30);
-	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d•b", timer->count);
+	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d•b", timer->count / 60);
 
 	DrawShapes(fallCircle,fallBox);
 
