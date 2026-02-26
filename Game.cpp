@@ -174,12 +174,6 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox) {
 	DrawBox(REDLINE.pos.x - REDLINE.length.x / 2, REDLINE.pos.y - REDLINE.length.y / 2,
 		REDLINE.pos.x + REDLINE.length.x / 2, REDLINE.pos.y + REDLINE.length.y / 2, REDLINE.color, TRUE);
 
-	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
-		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE);
-
-	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);
-	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo);
-
 	!player.flag ? DrawCircle(player.P_circle.pos.x, player.P_circle.pos.y, player.P_circle.radius, player.P_circle.color, TRUE) :
 		DrawBox(player.P_box.pos.x - player.P_box.length.x / 2, player.P_box.pos.y - player.P_box.length.y / 2,
 			player.P_box.pos.x + player.P_box.length.x / 2, player.P_box.pos.y + player.P_box.length.y / 2,
@@ -279,6 +273,12 @@ void Game(System* timer,State* state) {
 	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d秒", timer->count / 60);
 
 	DrawShapes(fallCircle,fallBox);
+
+	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
+		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE);
+
+	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);
+	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo);
 
 	timer->count--;
 
