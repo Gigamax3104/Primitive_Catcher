@@ -15,6 +15,8 @@ static int boxSave = 0;
 static int combo = 0;
 static int saveCombo = combo;
 
+static bool playFlag = true;
+
 static bool instanceFlag = true;
 
 static Player player = { MIDLE,{MIDLE,20,color[WHITE],0,true},{MIDLE,40,40,color[WHITE],0,true},false };
@@ -27,8 +29,8 @@ const Box REDLINE = { WIDTH / 2,HEIGHT - 12,WIDTH,24,color[RED],0,true };
 const Box UI = { WIDTH - 140,HEIGHT - 70,280,140,color[WHITE],0,true };
 
 static void RandomShaep() {
-	int random = time(NULL) % 2;
-	random == 0 ? circleCount++ : boxCount++;
+	int random = rand() % 100;
+	random < 50 ? circleCount++ : boxCount++;
 }
 
 static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Circle* SC = nullptr,const Box* SB = nullptr,bool r = false) {
@@ -55,42 +57,42 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 
 	if (instanceCount == 1) {
 		if (choice) {
-			fallCircle->radius = time(NULL) % (CIRCLE.radius - 5) + 5;
-			fallCircle->pos.x = time(NULL) % (WIDTH - fallCircle->radius * 2) + fallCircle->radius;
+			fallCircle->radius = rand() % (CIRCLE.radius - 5) + 5;
+			fallCircle->pos.x = rand() % (WIDTH - fallCircle->radius * 2) + fallCircle->radius;
 			fallCircle->pos.y = -fallCircle->radius;
-			fallCircle->speed = time(NULL) % 15 + 5;
-			fallCircle->color = color[time(NULL) % (COLORSIZE - 1)];
+			fallCircle->speed = rand() % 15 + 5;
+			fallCircle->color = color[rand() % (COLORSIZE - 1)];
 			fallCircle->displayFlag = CIRCLE.displayFlag;
 		}
 		else {
-			fallBox->length.x = time(NULL) % (BOX.length.x - 10) + 10;
+			fallBox->length.x = rand() % (BOX.length.x - 10) + 10;
 			fallBox->length.y = fallBox->length.x;
-			fallBox->pos.x = time(NULL) % (WIDTH - (fallBox->length.x / 2) * 2) + fallBox->length.x / 2;
+			fallBox->pos.x = rand() % (WIDTH - (fallBox->length.x / 2) * 2) + fallBox->length.x / 2;
 			fallBox->pos.y = -fallBox->length.y / 2;
-			fallBox->speed = time(NULL) % 15 + 5;
-			fallBox->color = color[time(NULL) % (COLORSIZE - 1)];
+			fallBox->speed = rand() % 15 + 5;
+			fallBox->color = color[rand() % (COLORSIZE - 1)];
 			fallBox->displayFlag = BOX.displayFlag;
 		}
 	}
 	else {
 		if (choice) {
 			for (int i = circleSave; i < circleCount; i++) {
-				fallCircle[i].radius = time(NULL) % (CIRCLE.radius - 5) + 5;
-				fallCircle[i].pos.x = time(NULL) % (WIDTH - fallCircle[i].radius * 2) + fallCircle[i].radius;
+				fallCircle[i].radius = rand() % (CIRCLE.radius - 5) + 5;
+				fallCircle[i].pos.x = rand() % (WIDTH - fallCircle[i].radius * 2) + fallCircle[i].radius;
 				fallCircle[i].pos.y = -fallCircle[i].radius;
-				fallCircle[i].speed = time(NULL) % 15 + 5;
-				fallCircle[i].color = color[time(NULL) % (COLORSIZE - 1)];
+				fallCircle[i].speed = rand() % 15 + 5;
+				fallCircle[i].color = color[rand() % (COLORSIZE - 1)];
 				fallCircle[i].displayFlag = CIRCLE.displayFlag;
 			}
 		}
 		else {
 			for (int i = boxSave; i < boxCount; i++) {
-				fallBox[i].length.x = time(NULL) % (BOX.length.x - 10) + 10;
+				fallBox[i].length.x = rand() % (BOX.length.x - 10) + 10;
 				fallBox[i].length.y = fallBox[i].length.x;
-				fallBox[i].pos.x = time(NULL) % (WIDTH - (fallBox[i].length.x / 2) * 2) + fallBox[i].length.x / 2;
+				fallBox[i].pos.x = rand() % (WIDTH - (fallBox[i].length.x / 2) * 2) + fallBox[i].length.x / 2;
 				fallBox[i].pos.y = -fallBox[i].length.y / 2;
-				fallBox[i].speed = time(NULL) % 15 + 5;
-				fallBox[i].color = color[time(NULL) % (COLORSIZE - 1)];
+				fallBox[i].speed = rand() % 15 + 5;
+				fallBox[i].color = color[rand() % (COLORSIZE - 1)];
 				fallBox[i].displayFlag = BOX.displayFlag;
 			}
 		}
@@ -124,52 +126,64 @@ static void Move(Circle* fallCircle, Box* fallBox) {
 	for (int i = 0; i < circleCount; i++) fallCircle[i].pos.y += fallCircle[i].speed;
 }
 
-static void CircleJudge(Circle* fallCircle) {
+static void CircleJudge(Circle* fallCircle,int circle_Se,int fault_Se) {
 	for (int i = 0; i < circleCount; i++) {
 		if (!player.flag && pow(fallCircle[i].pos.x - player.pos.x, 2) + pow(fallCircle[i].pos.y - player.pos.y, 2)
 			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) {
 			if (fallCircle[i].displayFlag) combo++;
 			if (combo > saveCombo) saveCombo = combo;
 
+			if(fallCircle[i].displayFlag) PlaySoundMem(circle_Se, DX_PLAYTYPE_BACK);
+
 			fallCircle[i].displayFlag = false;
 		}
-		else if ((player.flag && pow(fallCircle[i].pos.x - player.pos.x, 2) + pow(fallCircle[i].pos.y - player.pos.y, 2)
-			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) || fallCircle[i].displayFlag
+		else if ((player.flag && fallCircle[i].displayFlag && 
+			pow(fallCircle[i].pos.x - player.pos.x, 2) + pow(fallCircle[i].pos.y - player.pos.y, 2)
+			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) 
+			|| fallCircle[i].displayFlag
 			&& pow(fallCircle[i].pos.x - REDLINE.pos.x, 2) <= pow(fallCircle[i].radius + REDLINE.length.x / 2, 2)
 			&& pow(fallCircle[i].pos.y - REDLINE.pos.y, 2) <= pow(fallCircle[i].radius + REDLINE.length.y / 2, 2)) {
 			combo = 0;
+
+			if(fallCircle[i].displayFlag) PlaySoundMem(fault_Se, DX_PLAYTYPE_BACK);
+
 			fallCircle[i].displayFlag = false;
 		}
 	}
 }
 
-static void BoxJudge(Box* fallBox) {
+static void BoxJudge(Box* fallBox,int box_Se,int fault_Se) {
 	for (int i = 0; i < boxCount; i++) {
 		if (player.flag && pow(fallBox[i].pos.x - player.pos.x, 2) <= pow(fallBox[i].length.x / 2 + player.P_box.length.x / 2, 2)
 			&& pow(fallBox[i].pos.y - player.pos.y, 2) <= pow(fallBox[i].length.y / 2 + player.P_box.length.y / 2, 2)) {
 			if(fallBox[i].displayFlag) combo++;
 			if (combo > saveCombo) saveCombo = combo;
 
+			if(fallBox[i].displayFlag) PlaySoundMem(box_Se,DX_PLAYTYPE_BACK);
+
 			fallBox[i].displayFlag = false;
 		}
-		else if ((!player.flag && pow(fallBox[i].pos.x - player.pos.x, 2) <= pow(fallBox[i].length.x / 2 + player.P_box.length.x / 2, 2)
+		else if ((!player.flag && fallBox[i].displayFlag &&
+			pow(fallBox[i].pos.x - player.pos.x, 2) <= pow(fallBox[i].length.x / 2 + player.P_box.length.x / 2, 2)
 			&& pow(fallBox[i].pos.y - player.pos.y, 2) <= pow(fallBox[i].length.y / 2 + player.P_box.length.y / 2, 2))
 			|| fallBox[i].displayFlag
 			&& pow(fallBox[i].pos.x - REDLINE.pos.x, 2) <= pow(fallBox[i].length.x / 2 + REDLINE.length.x / 2, 2)
 			&& pow(fallBox[i].pos.y - REDLINE.pos.y, 2) <= pow(fallBox[i].length.y / 2 + REDLINE.length.y / 2, 2)) {
 			combo = 0;
 
+			if(fallBox[i].displayFlag) PlaySoundMem(fault_Se, DX_PLAYTYPE_BACK);
+
 			fallBox[i].displayFlag = false;
 		}
 	}
 }
 
-static void DrawShapes(Circle* fallCircle,Box* fallBox) {
+static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_Se, int fault_Se) {
 	Move(fallCircle, fallBox);
 
-	CircleJudge(fallCircle);
+	CircleJudge(fallCircle,circle_Se,fault_Se);
 
-	BoxJudge(fallBox);
+	BoxJudge(fallBox,box_Se,fault_Se);
 
 	DrawBox(REDLINE.pos.x - REDLINE.length.x / 2, REDLINE.pos.y - REDLINE.length.y / 2,
 		REDLINE.pos.x + REDLINE.length.x / 2, REDLINE.pos.y + REDLINE.length.y / 2, REDLINE.color, TRUE);
@@ -201,6 +215,8 @@ static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveB
 
 	combo = 0;
 
+	playFlag = true;
+
 	RandomShaep();
 
 	if (instanceFlag) circleSave = circleCount;
@@ -218,9 +234,7 @@ static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveB
 	player = { MIDLE,{MIDLE,20,color[WHITE],0,true},{MIDLE,40,40,color[WHITE],0,true},false };
 }
 
-void Game(System* timer,State* state) {
-	srand((unsigned int)time(NULL));
-
+void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_Se) {
 	if (instanceFlag || instanceSave != instanceCount) {
 		RandomShaep();
 
@@ -228,6 +242,12 @@ void Game(System* timer,State* state) {
 		if (instanceFlag) boxSave = boxCount;
 
 		instanceSave = instanceCount;
+	}
+
+	if (playFlag) {
+		ChangeVolumeSoundMem(150, bgm);
+		PlaySoundMem(bgm, DX_PLAYTYPE_LOOP);
+		playFlag = false;
 	}
 
 	static Circle* fallCircle = new Circle[circleCount];
@@ -272,7 +292,7 @@ void Game(System* timer,State* state) {
 	SetFontSize(30);
 	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d•b", timer->count / 60);
 
-	DrawShapes(fallCircle,fallBox);
+	DrawShapes(fallCircle,fallBox,circle_Se,box_Se,fault_Se);
 
 	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
 		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE);
@@ -285,6 +305,8 @@ void Game(System* timer,State* state) {
 	if (timer->count > 0 && timer->count % 15 == 0) instanceCount++;
 
 	if (timer->count <= 0 || CheckHitKey(KEY_INPUT_ESCAPE)) {
+		StopSoundMem(bgm);
+
 		timer->count = 0;
 		*state = OVER;
 

@@ -39,5 +39,11 @@ struct System {
 };
 
 enum State {
-	TITLE, GAME, OVER
+	TITLE, GAME, OVER,E
+};
+
+enum {
+	SE_CIRCLE = 3,
+	SE_BOX = 4,
+	SE_FAULT = 5
 };
