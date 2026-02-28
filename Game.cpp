@@ -56,7 +56,7 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 
 	if (instanceCount == 1) {
 		if (choice) {
-			fallCircle->radius = rand() % (CIRCLE.radius - 5) + 5;
+			fallCircle->radius = rand() % (CIRCLE.radius - 15) + 15;
 			fallCircle->pos.x = rand() % (WIDTH - fallCircle->radius * 2) + fallCircle->radius;
 			fallCircle->pos.y = -fallCircle->radius;
 			fallCircle->speed = rand() % 15 + 5;
@@ -64,7 +64,7 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 			fallCircle->displayFlag = CIRCLE.displayFlag;
 		}
 		else {
-			fallBox->length.x = rand() % (BOX.length.x - 10) + 10;
+			fallBox->length.x = rand() % (BOX.length.x - 20) + 20;
 			fallBox->length.y = fallBox->length.x;
 			fallBox->pos.x = rand() % (WIDTH - (fallBox->length.x / 2) * 2) + fallBox->length.x / 2;
 			fallBox->pos.y = -fallBox->length.y / 2;
@@ -76,7 +76,7 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 	else {
 		if (choice) {
 			for (int i = circleSave; i < circleCount; i++) {
-				fallCircle[i].radius = rand() % (CIRCLE.radius - 5) + 5;
+				fallCircle[i].radius = rand() % (CIRCLE.radius - 15) + 15;
 				fallCircle[i].pos.x = rand() % (WIDTH - fallCircle[i].radius * 2) + fallCircle[i].radius;
 				fallCircle[i].pos.y = -fallCircle[i].radius;
 				fallCircle[i].speed = rand() % 15 + 5;
@@ -86,7 +86,7 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 		}
 		else {
 			for (int i = boxSave; i < boxCount; i++) {
-				fallBox[i].length.x = rand() % (BOX.length.x - 10) + 10;
+				fallBox[i].length.x = rand() % (BOX.length.x - 20) + 20;
 				fallBox[i].length.y = fallBox[i].length.x;
 				fallBox[i].pos.x = rand() % (WIDTH - (fallBox[i].length.x / 2) * 2) + fallBox[i].length.x / 2;
 				fallBox[i].pos.y = -fallBox[i].length.y / 2;
@@ -203,6 +203,20 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_S
 	}
 }
 
+static void Draw(System* timer, Circle* fallCircle, Box* fallBox, int circle_Se, int box_Se, int fault_Se) {
+	SetFontSize(30);
+	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d秒", timer->count / 60); //残り時間
+
+	DrawShapes(fallCircle, fallBox, circle_Se, box_Se, fault_Se);
+
+	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
+		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE); //コンボの枠
+
+	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);		//コンボ
+	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo); //	  表示
+
+}
+
 static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveBox) { //ゲームが終了した際のリセット
 	hit = 0;
 
@@ -288,16 +302,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 
 	player.flag ? player.P_box.pos = player.pos : player.P_circle.pos = player.pos;
 
-	SetFontSize(30);
-	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d秒", timer->count / 60); //残り時間
-
-	DrawShapes(fallCircle,fallBox,circle_Se,box_Se,fault_Se);
-
-	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
-		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE); //コンボの枠
-
-	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);		//コンボ
-	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo); //	  表示
+	Draw(timer,fallCircle,fallBox,circle_Se,box_Se,fault_Se);
 
 	timer->count--;
 
