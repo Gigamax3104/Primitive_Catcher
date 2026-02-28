@@ -1,6 +1,5 @@
 #include	"DxLib.h"
 #include	"math.h"
-#include	"time.h"
 #include	"Color.h"
 #include	"Variable.h"
 
@@ -99,34 +98,34 @@ static void Initialization(Circle* fallCircle,Box* fallBox,bool choice,const Cir
 	}
 }
 
-static void ScreenAdjustment() {
+static void ScreenAdjustment() { //マウスポインターに表示する図形の制限
 	GetMousePoint(&player.pos.x, &player.pos.y);
 
-	if (!player.flag && player.pos.x < 0) player.pos.x = player.P_circle.radius;
-	else if (player.flag && player.pos.x < 0) player.pos.x = player.P_box.length.x / 2;
+	if (!player.flag && player.pos.x < 0) player.pos.x = player.P_circle.radius;		 //円の左端
+	else if (player.flag && player.pos.x < 0) player.pos.x = player.P_box.length.x / 2;  //矩形の左端
 
-	if (!player.flag && player.pos.x > WIDTH - player.P_circle.radius) player.pos.x = WIDTH - player.P_circle.radius;
-	else if(player.flag && player.pos.x > WIDTH - player.P_box.length.x / 2) player.pos.x = WIDTH - player.P_box.length.x / 2;
+	if (!player.flag && player.pos.x > WIDTH - player.P_circle.radius) player.pos.x = WIDTH - player.P_circle.radius;		   //円の右端
+	else if(player.flag && player.pos.x > WIDTH - player.P_box.length.x / 2) player.pos.x = WIDTH - player.P_box.length.x / 2; //矩形の右端
 
-	if (!player.flag && player.pos.y < player.P_circle.radius) player.pos.y = player.P_circle.radius;
-	else if (player.flag && player.pos.y < player.P_box.length.y / 2) player.pos.y = player.P_box.length.y / 2;
+	if (!player.flag && player.pos.y < player.P_circle.radius) player.pos.y = player.P_circle.radius;			//円の上端
+	else if (player.flag && player.pos.y < player.P_box.length.y / 2) player.pos.y = player.P_box.length.y / 2; //矩形の上橋
 
-	if (player.pos.y > HEIGHT) player.pos.y = HEIGHT;
+	if (player.pos.y > HEIGHT) player.pos.y = HEIGHT; //高さ上限
 
 	if (pow(player.pos.y - REDLINE.pos.y, 2) < pow(player.P_box.length.y / 2 + REDLINE.length.y / 2, 2))
-		player.pos.y = REDLINE.pos.y - REDLINE.length.y / 2 - player.P_box.length.y / 2;
+		player.pos.y = REDLINE.pos.y - REDLINE.length.y / 2 - player.P_box.length.y / 2; //矩形
 
 	if (pow(player.pos.y - REDLINE.pos.y, 2) < pow(player.P_circle.radius + REDLINE.length.y / 2, 2))
-		player.pos.y = REDLINE.pos.y - REDLINE.length.y / 2 - player.P_circle.radius;
+		player.pos.y = REDLINE.pos.y - REDLINE.length.y / 2 - player.P_circle.radius; //円
 }
 
-static void Move(Circle* fallCircle, Box* fallBox) {
+static void Move(Circle* fallCircle, Box* fallBox) { //対象物の図形動作
 	for (int i = 0; i < boxCount; i++) fallBox[i].pos.y += fallBox[i].speed;
 
 	for (int i = 0; i < circleCount; i++) fallCircle[i].pos.y += fallCircle[i].speed;
 }
 
-static void CircleJudge(Circle* fallCircle,int circle_Se,int fault_Se) {
+static void CircleJudge(Circle* fallCircle,int circle_Se,int fault_Se) { //円の当たり判定
 	for (int i = 0; i < circleCount; i++) {
 		if (!player.flag && pow(fallCircle[i].pos.x - player.pos.x, 2) + pow(fallCircle[i].pos.y - player.pos.y, 2)
 			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) {
@@ -139,10 +138,10 @@ static void CircleJudge(Circle* fallCircle,int circle_Se,int fault_Se) {
 		}
 		else if ((player.flag && fallCircle[i].displayFlag && 
 			pow(fallCircle[i].pos.x - player.pos.x, 2) + pow(fallCircle[i].pos.y - player.pos.y, 2)
-			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) 
+			<= pow(fallCircle[i].radius + player.P_circle.radius, 2)) //表示している間の、自分の図形の異なり
 			|| fallCircle[i].displayFlag
 			&& pow(fallCircle[i].pos.x - REDLINE.pos.x, 2) <= pow(fallCircle[i].radius + REDLINE.length.x / 2, 2)
-			&& pow(fallCircle[i].pos.y - REDLINE.pos.y, 2) <= pow(fallCircle[i].radius + REDLINE.length.y / 2, 2)) {
+			&& pow(fallCircle[i].pos.y - REDLINE.pos.y, 2) <= pow(fallCircle[i].radius + REDLINE.length.y / 2, 2)) { //赤線越え
 			combo = 0;
 
 			if(fallCircle[i].displayFlag) PlaySoundMem(fault_Se, DX_PLAYTYPE_BACK);
@@ -152,7 +151,7 @@ static void CircleJudge(Circle* fallCircle,int circle_Se,int fault_Se) {
 	}
 }
 
-static void BoxJudge(Box* fallBox,int box_Se,int fault_Se) {
+static void BoxJudge(Box* fallBox,int box_Se,int fault_Se) { //矩形の当たり判定
 	for (int i = 0; i < boxCount; i++) {
 		if (player.flag && pow(fallBox[i].pos.x - player.pos.x, 2) <= pow(fallBox[i].length.x / 2 + player.P_box.length.x / 2, 2)
 			&& pow(fallBox[i].pos.y - player.pos.y, 2) <= pow(fallBox[i].length.y / 2 + player.P_box.length.y / 2, 2)) {
@@ -165,10 +164,10 @@ static void BoxJudge(Box* fallBox,int box_Se,int fault_Se) {
 		}
 		else if ((!player.flag && fallBox[i].displayFlag &&
 			pow(fallBox[i].pos.x - player.pos.x, 2) <= pow(fallBox[i].length.x / 2 + player.P_box.length.x / 2, 2)
-			&& pow(fallBox[i].pos.y - player.pos.y, 2) <= pow(fallBox[i].length.y / 2 + player.P_box.length.y / 2, 2))
+			&& pow(fallBox[i].pos.y - player.pos.y, 2) <= pow(fallBox[i].length.y / 2 + player.P_box.length.y / 2, 2)) //表示している間の、自分の図形の異なり
 			|| fallBox[i].displayFlag
 			&& pow(fallBox[i].pos.x - REDLINE.pos.x, 2) <= pow(fallBox[i].length.x / 2 + REDLINE.length.x / 2, 2)
-			&& pow(fallBox[i].pos.y - REDLINE.pos.y, 2) <= pow(fallBox[i].length.y / 2 + REDLINE.length.y / 2, 2)) {
+			&& pow(fallBox[i].pos.y - REDLINE.pos.y, 2) <= pow(fallBox[i].length.y / 2 + REDLINE.length.y / 2, 2)) { //赤線越え
 			combo = 0;
 
 			if(fallBox[i].displayFlag) PlaySoundMem(fault_Se, DX_PLAYTYPE_BACK);
@@ -178,7 +177,7 @@ static void BoxJudge(Box* fallBox,int box_Se,int fault_Se) {
 	}
 }
 
-static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_Se, int fault_Se) {
+static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_Se, int fault_Se) { //図形表示
 	Move(fallCircle, fallBox);
 
 	CircleJudge(fallCircle,circle_Se,fault_Se);
@@ -186,12 +185,12 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_S
 	BoxJudge(fallBox,box_Se,fault_Se);
 
 	DrawBox(REDLINE.pos.x - REDLINE.length.x / 2, REDLINE.pos.y - REDLINE.length.y / 2,
-		REDLINE.pos.x + REDLINE.length.x / 2, REDLINE.pos.y + REDLINE.length.y / 2, REDLINE.color, TRUE);
+		REDLINE.pos.x + REDLINE.length.x / 2, REDLINE.pos.y + REDLINE.length.y / 2, REDLINE.color, TRUE); //赤線
 
 	!player.flag ? DrawCircle(player.P_circle.pos.x, player.P_circle.pos.y, player.P_circle.radius, player.P_circle.color, TRUE) :
 		DrawBox(player.P_box.pos.x - player.P_box.length.x / 2, player.P_box.pos.y - player.P_box.length.y / 2,
 			player.P_box.pos.x + player.P_box.length.x / 2, player.P_box.pos.y + player.P_box.length.y / 2,
-			player.P_box.color, TRUE);
+			player.P_box.color, TRUE); //自分の図形
 
 	for (int i = 0; i < circleCount; i++) {
 		if (fallCircle[i].displayFlag)
@@ -204,7 +203,7 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_S
 	}
 }
 
-static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveBox) {
+static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveBox) { //ゲームが終了した際のリセット
 	hit = 0;
 
 	instanceCount = 1;
@@ -234,8 +233,8 @@ static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveB
 	player = { MIDLE,{MIDLE,20,color[WHITE],0,true},{MIDLE,40,40,color[WHITE],0,true},false };
 }
 
-void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_Se) {
-	if (instanceFlag || instanceSave != instanceCount) {
+void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_Se) { //主に処理する関数
+	if (instanceFlag || instanceSave != instanceCount) { //始まった時のみ
 		RandomShaep();
 
 		if(instanceFlag) circleSave = circleCount;
@@ -244,7 +243,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 		instanceSave = instanceCount;
 	}
 
-	if (playFlag) {
+	if (playFlag) { //始まった時のみ
 		ChangeVolumeSoundMem(150, bgm);
 		PlaySoundMem(bgm, DX_PLAYTYPE_LOOP);
 		playFlag = false;
@@ -256,13 +255,13 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 	static Box* fallBox = new Box[boxCount];
 	static Box* saveFallBox = fallBox;
 
-	if (instanceFlag) {
+	if (instanceFlag) { //始まった時のみ
 		if(circleCount != 0) Initialization(fallCircle, fallBox,true);
 		if(boxCount != 0) Initialization(fallCircle, fallBox,false);
 		instanceFlag = false;
 	}
 
-	if (circleCount != circleSave) {
+	if (circleCount != circleSave) { //対象物(円)の生成時
 		fallCircle = new Circle[circleCount];
 
 		if(circleSave == 0) Initialization(fallCircle, fallBox, true);
@@ -272,7 +271,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 		saveFallCircle = fallCircle;
 	}
 
-	if (boxCount != boxSave) {
+	if (boxCount != boxSave) { //対象物(矩形)の生成時
 		fallBox = new Box[boxCount];
 
 		if(boxSave == 0) Initialization(fallCircle, fallBox, false);
@@ -285,26 +284,26 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 	ScreenAdjustment();
 
 	CheckHitKey(KEY_INPUT_SPACE) ? hit++ : hit = 0;
-	if (hit == 1) !player.flag ? player.flag = true : player.flag = false;
+	if (hit == 1) !player.flag ? player.flag = true : player.flag = false; //スペースキーの判定
 
 	player.flag ? player.P_box.pos = player.pos : player.P_circle.pos = player.pos;
 
 	SetFontSize(30);
-	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d秒", timer->count / 60);
+	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d秒", timer->count / 60); //残り時間
 
 	DrawShapes(fallCircle,fallBox,circle_Se,box_Se,fault_Se);
 
 	DrawBox(UI.pos.x - UI.length.x / 2, UI.pos.y - UI.length.y / 2,
-		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE);
+		UI.pos.x + UI.length.x / 2, UI.pos.y + UI.length.y / 2, UI.color, TRUE); //コンボの枠
 
-	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);
-	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo);
+	DrawFormatString(WIDTH - 270, HEIGHT - 120, color[BLACK], "コンボ数:%d", combo);		//コンボ
+	DrawFormatString(WIDTH - 270, HEIGHT - 50, color[BLACK], "最大コンボ数:%d", saveCombo); //	  表示
 
 	timer->count--;
 
-	if (timer->count > 0 && timer->count % 15 == 0) instanceCount++;
+	if (timer->count > 0 && timer->count % 15 == 0) instanceCount++; //15秒ごと生成
 
-	if (timer->count <= 0 || CheckHitKey(KEY_INPUT_ESCAPE)) {
+	if (timer->count <= 0 || CheckHitKey(KEY_INPUT_ESCAPE)) { //ゲーム終了
 		StopSoundMem(bgm);
 
 		timer->count = 0;

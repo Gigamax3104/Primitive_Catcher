@@ -1,16 +1,16 @@
 #pragma once
 
-const int WIDTH = 1080;
-const int HEIGHT = 720;
+const int WIDTH = 1080; //ウインドウ幅
+const int HEIGHT = 720; //ウインドウ高
 
-struct Vector2 {
+struct Vector2 { //位置
 	int x;
 	int y;
 };
 
-const Vector2 MIDLE = { WIDTH / 2,HEIGHT / 2 };
+const Vector2 MIDLE = { WIDTH / 2,HEIGHT / 2 }; //中央
 
-struct Circle {
+struct Circle { //円
 	Vector2 pos;
 	int radius;
 	int color;
@@ -18,7 +18,7 @@ struct Circle {
 	bool displayFlag;
 };
 
-struct Box {
+struct Box { //矩形
 	Vector2 pos;
 	Vector2 length;
 	int color;
@@ -26,23 +26,23 @@ struct Box {
 	bool displayFlag;
 };
 
-struct Player {
+struct Player { //プレイヤー
 	Vector2 pos;
 	Circle P_circle;
 	Box P_box;
 	bool flag;
 };
 
-struct System {
+struct System { //システム
 	Vector2 pos;
 	int count;
 };
 
-enum State {
+enum State { //状態
 	TITLE, GAME, OVER,E
 };
 
-enum {
+enum { //SE
 	SE_CIRCLE = 3,
 	SE_BOX = 4,
 	SE_FAULT = 5

@@ -3,7 +3,7 @@
 #include	"Function.h"
 #include	"Variable.h"
 
-const char* musicFile[] = {
+const char* musicFile[] = { //音のファイル(追加時はここへ記入)
 	"sound/Title.mp3","sound/Game.mp3","sound/GameOver.mp3","sound/Circle.mp3","sound/Box.mp3","sound/Fault.mp3"
 };
 const int FILESIZE = sizeof musicFile / sizeof musicFile[0];
@@ -24,7 +24,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	State state = TITLE;
 
-	if (ErrorCheck(musicFile, FILESIZE)) state = E;
+	if (ErrorCheck(musicFile, FILESIZE)) state = E; //エラーチェック(詳細は「ErrorCheck.cpp」へ)
 
 	for (int i = 0; i < FILESIZE; i++) music[i] = LoadSoundMem(musicFile[i]);
 
@@ -33,16 +33,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		switch (state) {
 		case TITLE:
-			Title(&timer, &state,music[state]);
+			Title(&timer, &state,music[state]); //タイトル(詳細は「Title.cpp」へ)
 			break;
 		case GAME:
-			Game(&timer, &state,music[state],music[SE_CIRCLE],music[SE_BOX],music[SE_FAULT]);
+			Game(&timer, &state,music[state],music[SE_CIRCLE],music[SE_BOX],music[SE_FAULT]); //ゲームプレイ(詳細は「Game.cpp」へ)
 			break;
 		case OVER:
-			Over(&timer, &state,music[state]);
+			Over(&timer, &state,music[state]); //ゲームオーバー(詳細は「Over.cpp」へ)
 			break;
 		case E:
-			Error(musicFile, FILESIZE);
+			Error(musicFile, FILESIZE); //エラー(詳細は「ErrorCheck.cpp」へ)
 			break;
 		}
 

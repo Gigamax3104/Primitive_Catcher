@@ -5,7 +5,7 @@
 static bool playFlag = true;
 
 void Over(System* timer,State* state,int music) {
-	if (playFlag) {
+	if (playFlag) { //ゲームオーバーになった時のみ
 		PlaySoundMem(music, DX_PLAYTYPE_BACK);
 		playFlag = false;
 	}
@@ -16,7 +16,7 @@ void Over(System* timer,State* state,int music) {
 
 	timer->count++;
 
-	if (timer->count >= 60 * 3) {
+	if (timer->count >= 60 * 3) { //3秒後にタイトルへ戻る
 		playFlag = true;
 
 		timer->count = 0;
