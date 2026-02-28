@@ -302,7 +302,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 
 	player.flag ? player.P_box.pos = player.pos : player.P_circle.pos = player.pos;
 
-	Draw(timer,fallCircle,fallBox,circle_Se,box_Se,fault_Se);
+	Draw(timer,fallCircle,fallBox,circle_Se,box_Se,fault_Se); //•`‰æ
 
 	timer->count--;
 
