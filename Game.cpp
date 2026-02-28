@@ -203,7 +203,7 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_S
 	}
 }
 
-static void Draw(System* timer, Circle* fallCircle, Box* fallBox, int circle_Se, int box_Se, int fault_Se) {
+static void Draw(System* timer, Circle* fallCircle, Box* fallBox, int circle_Se, int box_Se, int fault_Se) { //•`‰æ
 	SetFontSize(30);
 	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%d•b", timer->count / 60); //c‚èŠÔ
 
@@ -302,7 +302,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 
 	player.flag ? player.P_box.pos = player.pos : player.P_circle.pos = player.pos;
 
-	Draw(timer,fallCircle,fallBox,circle_Se,box_Se,fault_Se); //•`‰æ
+	Draw(timer,fallCircle,fallBox,circle_Se,box_Se,fault_Se);
 
 	timer->count--;
 
