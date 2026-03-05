@@ -317,6 +317,6 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 		delete[] fallCircle;
 		delete[] fallBox;
 
-		if(CheckHitKey(KEY_INPUT_ESCAPE) == 0)Reset(fallCircle,fallBox,saveFallCircle,saveFallBox);
+		Reset(fallCircle,fallBox,saveFallCircle,saveFallBox);
 	}
 }
