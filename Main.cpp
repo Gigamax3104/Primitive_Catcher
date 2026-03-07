@@ -8,8 +8,6 @@ const char* musicFile[] = { //音のファイル(追加時はここへ記入)
 };
 const int FILESIZE = sizeof musicFile / sizeof musicFile[0];
 
-System timer = { 0,HEIGHT / 2,0 };
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	SetWindowText("プリミティブキャッチャー");
 	SetGraphMode(WIDTH, HEIGHT, 32);
@@ -24,9 +22,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	State state = TITLE;
 
-	if (ErrorCheck(musicFile, FILESIZE)) state = E; //エラーチェック(詳細は「ErrorCheck.cpp」へ)
+	System timer = { 0,HEIGHT / 2,0 };
 
 	for (int i = 0; i < FILESIZE; i++) music[i] = LoadSoundMem(musicFile[i]);
+
+	if (ErrorCheck(musicFile, FILESIZE)) state = E; //エラーチェック(詳細は「ErrorCheck.cpp」へ)
 
 	while (1) {
 		ClearDrawScreen();

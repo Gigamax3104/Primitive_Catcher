@@ -27,7 +27,7 @@ const Box BOX = { WIDTH / 2 + 30,-15,50,50,color[BLUE],10,true };
 const Box REDLINE = { WIDTH / 2,HEIGHT - 12,WIDTH,24,color[RED],0,true };
 const Box UI = { WIDTH - 140,HEIGHT - 70,280,140,color[WHITE],0,true };
 
-static void RandomShaep() {
+static void RandomShape() {
 	int random = rand() % 100;
 	random < 50 ? circleCount++ : boxCount++;
 }
@@ -203,7 +203,7 @@ static void DrawShapes(Circle* fallCircle,Box* fallBox, int circle_Se, int box_S
 	}
 }
 
-static void Draw(System* timer, Circle* fallCircle, Box* fallBox, int circle_Se, int box_Se, int fault_Se) { //ï`âÊ
+static void Draw(const System* timer, Circle* fallCircle, Box* fallBox, int circle_Se, int box_Se, int fault_Se) { //ï`âÊ
 	SetFontSize(30);
 	DrawFormatString(timer->pos.x, timer->pos.y, color[WHITE], "%dïb", timer->count / 60); //écÇËéûä‘
 
@@ -221,38 +221,29 @@ static void Reset(Circle* fallCircle, Box* fallBox,Circle* saveCircle,Box* saveB
 	hit = 0;
 
 	instanceCount = 1;
-	instanceSave = instanceCount;
+
 	circleCount = 0, boxCount = 0;
 	circleSave = 0;
 	boxSave = 0;
 
 	combo = 0;
 
+	RandomShape();
+
+
 	playFlag = true;
-
-	RandomShaep();
-
-	if (instanceFlag) circleSave = circleCount;
-	if (instanceFlag) boxSave = boxCount;
-
-	fallCircle = new Circle[circleCount];
-	saveCircle = fallCircle;
-
-	fallBox = new Box[boxCount];
-	saveBox = fallBox;
-
-	if (circleCount != 0) Initialization(fallCircle, fallBox, true);
-	if (boxCount != 0) Initialization(fallCircle, fallBox, false);
 
 	player = { MIDLE,{MIDLE,20,color[WHITE],0,true},{MIDLE,40,40,color[WHITE],0,true},false };
 }
 
 void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_Se) { //éÂÇ…èàóùÇ∑ÇÈä÷êî
 	if (instanceFlag || instanceSave != instanceCount) { //énÇ‹Ç¡ÇΩéûÇÃÇ›
-		RandomShaep();
+		RandomShape();
 
-		if(instanceFlag) circleSave = circleCount;
-		if (instanceFlag) boxSave = boxCount;
+		if (instanceFlag) {
+			circleSave = circleCount;
+			boxSave = boxCount;
+		}
 
 		instanceSave = instanceCount;
 	}
@@ -281,6 +272,8 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 		if(circleSave == 0) Initialization(fallCircle, fallBox, true);
 		else Initialization(fallCircle, fallBox,true,saveFallCircle,nullptr,true);
 
+		if(circleSave != 0) delete[] saveFallCircle;
+
 		circleSave = circleCount;
 		saveFallCircle = fallCircle;
 	}
@@ -290,6 +283,8 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 
 		if(boxSave == 0) Initialization(fallCircle, fallBox, false);
 		else Initialization(fallCircle, fallBox,false,nullptr,saveFallBox,true);
+
+		if(boxSave != 0) delete[] saveFallBox;
 
 		boxSave = boxCount;
 		saveFallBox = fallBox;
@@ -315,6 +310,7 @@ void Game(System* timer,State* state,int bgm,int circle_Se,int box_Se,int fault_
 		*state = OVER;
 
 		delete[] fallCircle;
+
 		delete[] fallBox;
 
 		Reset(fallCircle,fallBox,saveFallCircle,saveFallBox);
